@@ -8,7 +8,7 @@
 int main()
 {
 
-	// retutns zero on success else non-zero 
+	// returns zero on success else non-zero 
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		printf("error initializing SDL: %s\n", SDL_GetError());
 	}
