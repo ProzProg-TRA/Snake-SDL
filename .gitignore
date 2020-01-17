@@ -20,7 +20,9 @@
 *.user
 *.userosscache
 *.sln.docstates
-.dependencies/*
+.dependencies/SDL2/bin/*
+.dependencies/SDL2/lib/*
+.dependencies/SDL2/include/*
 .bin/*
 *.sln
 *.vcxproj
