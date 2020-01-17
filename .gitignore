@@ -20,8 +20,11 @@
 *.user
 *.userosscache
 *.sln.docstates
-.dependecies/*
+.dependencies/*
 .bin/*
+*.sln
+*.vcxproj
+*.vcxproj.filters
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
