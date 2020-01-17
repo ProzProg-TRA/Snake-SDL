@@ -22,7 +22,7 @@
 *.sln.docstates
 .dependencies/SDL2/bin/*
 .dependencies/SDL2/lib/*
-.dependencies/SDL2/include/*
+.dependencies/SDL2/include/SDL2/*
 .bin/*
 *.sln
 *.vcxproj
