@@ -48,10 +48,11 @@ enum cell_state grid[GRID_RES_X * GRID_RES_Y];
 
 enum directions snake_direction;
 snake_segment* snake_head;
-int snake_length;
+int score;
 int item_eaten;
 int should_close;
 int pause;
+int game_over;
 
 enum cell_state* get_cell_ptr_at(int x, int y)
 {
@@ -152,16 +153,28 @@ void step()
             switch (event.key.keysym.scancode)
             {
             case SDL_SCANCODE_UP:
-                snake_direction = up;
+                if (snake_direction != down)
+                {
+                    snake_direction = up;
+                }
                 break;
             case SDL_SCANCODE_DOWN:
-                snake_direction = down;
+                if (snake_direction != up)
+                {
+                    snake_direction = down;
+                }
                 break;
             case SDL_SCANCODE_LEFT:
-                snake_direction = left;
+                if (snake_direction != right)
+                {
+                    snake_direction = left;
+                }
                 break;
             case SDL_SCANCODE_RIGHT:
-                snake_direction = right;
+                if (snake_direction != left)
+                {
+                    snake_direction = right;
+                }
                 break;
             case SDL_SCANCODE_ESCAPE:
                 pause = !pause;
@@ -210,7 +223,7 @@ void step()
     case wall:
         // fall through
     case snake:
-        // TODO: game over
+        game_over = 1;
         break;
     case empty:
         // do nothing
@@ -287,10 +300,11 @@ int main()
     snake_tex = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 
-
+    // initialize
     pause = 1;
     should_close = 0;
     snake_direction = left;
+    game_over = 0;
     
     unsigned int tick;
     int remaining;
