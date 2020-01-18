@@ -296,7 +296,7 @@ int main()
     item_tex = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 
-    surface = SDL_LoadBMP("res/red.bmp");
+    surface = SDL_LoadBMP("res/snake.bmp");
     snake_tex = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 
