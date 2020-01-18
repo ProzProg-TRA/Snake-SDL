@@ -7,8 +7,8 @@
 
 SDL_Window* window;
 SDL_Renderer* renderer;
-SDL_Texture* bitmapTex;
-SDL_Surface* bitmapSurface;
+SDL_Texture* wall_tex;
+SDL_Surface* wall_surface;
 SDL_Event event;
 
 enum directions{
@@ -18,7 +18,21 @@ enum directions{
     right   = 3
 };
 
+/*
+ * Format of the grid cells:
+ * -------------------------------
+ * >0 = Snake, TTL of the segment
+ *  0 = Empty
+ * -1 = Item
+ * -2 = Wall
+ */
+
+int grid[GRID_RES_X * GRID_RES_Y];
+
 enum directions snake_direction;
+int snake_head_x;
+int snake_head_y;
+
 int should_close;
 int pause;
 
@@ -26,17 +40,30 @@ void draw()
 {
     SDL_RenderClear(renderer);
     SDL_Rect rect;
+    rect.w = rect.h = GRID_CELL_SIZE;
 
     for (int y = 0; y < GRID_RES_Y; y++)
     {
         for (int x = 0; x < GRID_RES_X; x++)
         {
-            if ((x+y)%2)
+            rect.x = x * GRID_CELL_SIZE;
+            rect.y = y * GRID_CELL_SIZE;
+
+            switch (grid[y*GRID_RES_X+x])
             {
-                rect.x = x * GRID_CELL_SIZE;
-                rect.y = y * GRID_CELL_SIZE;
-                rect.w = rect.h = GRID_CELL_SIZE;
-                SDL_RenderCopy(renderer, bitmapTex, NULL, &rect);
+            case -2:
+                SDL_RenderCopy(renderer, wall_tex, NULL, &rect);
+                break;
+            case -1:
+                // render item
+                break;
+            case 0:
+                // render background
+    grid[5*GRID_RES_X+3] = -1;
+                break;
+            default:
+                break;
+                // render snake
             }
         }
     }
@@ -74,6 +101,24 @@ void step()
     }
 }
 
+void init_board()
+{
+    // create walls
+    for (int y = 0; y < GRID_RES_Y; y++)
+    {
+        for (int x = 0; x < GRID_RES_X; x++)
+        {
+            if (x == 0 || x == GRID_RES_X - 1 || y == 0 || y == GRID_RES_Y - 1)
+            {
+                grid[y * GRID_RES_X + x] = -2;
+            }
+        }
+    }
+    
+    // create item
+    grid[5*GRID_RES_X+3] = -1;
+}
+
 int main()
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { 
@@ -88,12 +133,14 @@ int main()
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    bitmapSurface = SDL_LoadBMP("res/red.bmp");
-    bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-    SDL_FreeSurface(bitmapSurface);
+    wall_surface = SDL_LoadBMP("res/red.bmp");
+    wall_tex = SDL_CreateTextureFromSurface(renderer, wall_surface);
+    SDL_FreeSurface(wall_surface);
 
     pause = 0;
     should_close = 0;
+
+    init_board();
 
     //main loop
     while (should_close == 0)
