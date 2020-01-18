@@ -8,7 +8,8 @@
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* wall_tex;
-SDL_Surface* wall_surface;
+SDL_Texture* item_tex;
+SDL_Surface* surface;
 SDL_Event event;
 
 enum directions{
@@ -55,11 +56,10 @@ void draw()
                 SDL_RenderCopy(renderer, wall_tex, NULL, &rect);
                 break;
             case -1:
-                // render item
+                SDL_RenderCopy(renderer, item_tex, NULL, &rect);
                 break;
             case 0:
                 // render background
-    grid[5*GRID_RES_X+3] = -1;
                 break;
             default:
                 break;
@@ -133,9 +133,15 @@ int main()
 
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    wall_surface = SDL_LoadBMP("res/red.bmp");
-    wall_tex = SDL_CreateTextureFromSurface(renderer, wall_surface);
-    SDL_FreeSurface(wall_surface);
+    surface = SDL_LoadBMP("res/wall.bmp");
+    wall_tex = SDL_CreateTextureFromSurface(renderer, surface);
+
+    SDL_FreeSurface(surface);
+
+    surface = SDL_LoadBMP("res/item.bmp");
+    item_tex = SDL_CreateTextureFromSurface(renderer, surface);
+
+    SDL_FreeSurface(surface);
 
     pause = 0;
     should_close = 0;
