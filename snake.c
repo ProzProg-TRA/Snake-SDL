@@ -5,11 +5,14 @@
 #define GRID_CELL_SIZE 50
 #define NUM_TICKS_PER_FRAME 200
 
+void restart();
+
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* wall_tex;
 SDL_Texture* item_tex;
 SDL_Texture* snake_tex;
+SDL_Texture* game_over_tex;
 SDL_Surface* surface;
 SDL_Event event;
 
@@ -34,15 +37,6 @@ struct _snake_segment{
 };
 
 typedef struct _snake_segment snake_segment;
-
-/*
- * Format of the grid cells:
- * -------------------------------
- *  1 = Snake
- *  0 = Empty
- * -1 = Item
- * -2 = Wall
- */
 
 enum cell_state grid[GRID_RES_X * GRID_RES_Y];
 
@@ -109,6 +103,15 @@ void place_new_item()
 void draw()
 {
     SDL_RenderClear(renderer);
+
+    if (game_over)
+    {
+        SDL_RenderCopy(renderer, game_over_tex, NULL, NULL);
+        SDL_RenderPresent(renderer);
+        return;
+    }
+    
+
     SDL_Rect rect;
     rect.w = rect.h = GRID_CELL_SIZE;
 
@@ -176,8 +179,16 @@ void step()
                     snake_direction = right;
                 }
                 break;
-            case SDL_SCANCODE_ESCAPE:
+            case SDL_SCANCODE_RETURN:
+                if (game_over)
+                {
+                    restart();
+                    break;
+                }
                 pause = !pause;
+                break;
+            case SDL_SCANCODE_ESCAPE:
+                should_close = 1;
                 break;
             default:
                 break;
@@ -191,7 +202,7 @@ void step()
     {
         return;
     }
-
+    
     int new_head_x = snake_head->x;
     int new_head_y = snake_head->y;
 
@@ -232,6 +243,11 @@ void step()
         break;
     }
 
+    if (game_over)
+    {
+        return;
+    }
+
     add_new_head(new_head_x, new_head_y);
     if (item_eaten == 1)
     {
@@ -242,7 +258,7 @@ void step()
     remove_last_segment();
 }
 
-void init_board()
+void init_grid()
 {
     // create walls
     for (int y = 0; y < GRID_RES_Y; y++)
@@ -267,10 +283,42 @@ void init_board()
     *get_cell_ptr_at(9, 4) = snake;
     
     snake_head = seg1;
+    snake_direction = left;
     
     add_new_head(8, 4);
     add_new_head(7, 4);
     
+}
+
+void destroy_snake(snake_segment* seg)
+{
+    if (seg->next == NULL)
+    {
+        free(seg);
+        return;
+    }
+    destroy_snake(seg->next);
+}
+
+void restart()
+{
+    // delete current snake
+    destroy_snake(snake_head);
+
+    // clear the grid
+    for (int y = 0; y < GRID_RES_Y; y++)
+    {
+        for (int x = 0; x < GRID_RES_X; x++)
+        {
+            *get_cell_ptr_at(x, y) = empty;
+        }
+        
+    }
+
+    // initialize the grid
+    init_grid();
+
+    game_over = 0;
 }
 
 int main()
@@ -300,16 +348,19 @@ int main()
     snake_tex = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_FreeSurface(surface);
 
+    surface = SDL_LoadBMP("res/game_over.bmp");
+    game_over_tex = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+
     // initialize
     pause = 1;
     should_close = 0;
-    snake_direction = left;
     game_over = 0;
     
     unsigned int tick;
     int remaining;
 
-    init_board();
+    init_grid();
 
     //main loop
     while (should_close == 0)
