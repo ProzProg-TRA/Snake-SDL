@@ -59,7 +59,8 @@ void add_new_head(int x, int y)
 
     new_head->next = snake_head;
     new_head->x = x;
-    new_head->y = y;    
+    new_head->y = y;
+
     snake_head = new_head;
     *get_cell_ptr_at(new_head->x, new_head->y) = snake;
 }
@@ -146,6 +147,8 @@ void draw()
 
 void step()
 {
+    enum directions new_direction = snake_direction;
+
     while(SDL_PollEvent(&event)){
         switch (event.type)
         {
@@ -158,25 +161,25 @@ void step()
             case SDL_SCANCODE_UP:
                 if (snake_direction != down)
                 {
-                    snake_direction = up;
+                    new_direction = up;
                 }
                 break;
             case SDL_SCANCODE_DOWN:
                 if (snake_direction != up)
                 {
-                    snake_direction = down;
+                    new_direction = down;
                 }
                 break;
             case SDL_SCANCODE_LEFT:
                 if (snake_direction != right)
                 {
-                    snake_direction = left;
+                    new_direction = left;
                 }
                 break;
             case SDL_SCANCODE_RIGHT:
                 if (snake_direction != left)
                 {
-                    snake_direction = right;
+                    new_direction = right;
                 }
                 break;
             case SDL_SCANCODE_RETURN:
@@ -197,6 +200,8 @@ void step()
             break;
         }
     }
+
+    snake_direction = new_direction;
 
     if (pause)
     {
