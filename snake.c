@@ -326,7 +326,7 @@ void restart()
     game_over = 0;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { 
 		printf("error initializing SDL: %s\n", SDL_GetError()); 
