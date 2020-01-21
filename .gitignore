@@ -1,2 +1,4 @@
 .vscode/*
 bin/*
+.gitignore
+*akefile
