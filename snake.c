@@ -1,9 +1,9 @@
 #include <SDL2/SDL.h>
 
-#define GRID_RES_X 180
-#define GRID_RES_Y 80    
-#define GRID_CELL_SIZE 10
-#define NUM_TICKS_PER_FRAME 40
+#define GRID_RES_X 64
+#define GRID_RES_Y 36    
+#define GRID_CELL_SIZE 15
+#define NUM_TICKS_PER_FRAME 200
 
 void restart();
 
