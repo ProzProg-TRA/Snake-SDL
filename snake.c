@@ -1,8 +1,8 @@
 #include <SDL2/SDL.h>
 
-#define GRID_RES_X 16
-#define GRID_RES_Y 9    
-#define GRID_CELL_SIZE 50
+#define GRID_RES_X 64
+#define GRID_RES_Y 36    
+#define GRID_CELL_SIZE 15
 #define NUM_TICKS_PER_FRAME 200
 
 void restart();
@@ -59,8 +59,7 @@ void add_new_head(int x, int y)
 
     new_head->next = snake_head;
     new_head->x = x;
-    new_head->y = y;
-
+    new_head->y = y;    
     snake_head = new_head;
     *get_cell_ptr_at(new_head->x, new_head->y) = snake;
 }
@@ -278,20 +277,20 @@ void init_grid()
     }
     
     // create item
-    *get_cell_ptr_at(3, 5) = item;
+    place_new_item();
 
     // create snake
     snake_segment* seg1 = malloc(sizeof(snake_segment));
     seg1->next = NULL;
-    seg1->x = 9;
-    seg1->y = 4;
-    *get_cell_ptr_at(9, 4) = snake;
-    
+    seg1->x = GRID_RES_X/2;
+    seg1->y = GRID_RES_Y/2;
+    *get_cell_ptr_at(GRID_RES_X/2, GRID_RES_Y/2) = snake;
     snake_head = seg1;
     snake_direction = left;
-    
-    add_new_head(8, 4);
-    add_new_head(7, 4);
+
+    add_new_head(GRID_RES_X/2-1, GRID_RES_Y/2);
+    add_new_head(GRID_RES_X/2-2, GRID_RES_Y/2);
+
     
 }
 
